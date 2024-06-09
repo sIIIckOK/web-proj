@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
-	"errors"
-	"fmt"
-	"log"
+    "database/sql"
+    "errors"
+    "fmt"
+    "log"
 
-	_ "github.com/lib/pq"
+    _ "github.com/lib/pq"
 )
 
 const (
@@ -62,11 +62,11 @@ func (d *PostgresStorage) CreateDatabaseINE(dbName string) error {
 func (d *PostgresStorage) CreateUserTableINE() error {
     query := 
     `CREATE TABLE IF NOT EXISTS "user" (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(255) NOT NULL,
-            first_name VARCHAR(255) NOT NULL,
-            last_name VARCHAR(255) NOT NULL,
-            password TEXT)`
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    password TEXT)`
 
     if _, err := d.DB.Query(query); err != nil {
         return errors.New("error creating \"user\" table: " + err.Error())
@@ -77,12 +77,12 @@ func (d *PostgresStorage) CreateUserTableINE() error {
 func (d *PostgresStorage) CreateTodoTableINE() error {
     query := 
     `CREATE TABLE IF NOT EXISTS todo (
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            user_id INT,
-            CONSTRAINT fk_todo_userid 
-                FOREIGN KEY(user_id) 
-                    REFERENCES "user"(id))`
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    user_id INT,
+    CONSTRAINT fk_todo_userid 
+    FOREIGN KEY(user_id) 
+    REFERENCES "user"(id))`
 
     if _, err := d.DB.Query(query); err != nil {
         return errors.New("error creating todo table: " + err.Error())
@@ -93,7 +93,7 @@ func (d *PostgresStorage) CreateTodoTableINE() error {
 func (d *PostgresStorage) CreateUser(r ReqCreateUser) error {
     query := 
     `INSERT INTO "user" (username, first_name, last_name)
-                 VALUES ($1, $2, $3)`
+    VALUES ($1, $2, $3)`
 
     _, err := d.DB.Query(query, r.Username, r.FirstName, r.LastName)
     return err
@@ -110,7 +110,7 @@ func (d *PostgresStorage) DeleteUser(id uint) error {
 func (d *PostgresStorage) CreateTodo(r ReqCreateTodo) error {
     query := 
     `INSERT INTO todo (title, user_id)
-                 VALUES ($1, $2)`
+    VALUES ($1, $2)`
 
     _, err := d.DB.Query(query, r.Title, r.UserId)
     return err
@@ -127,10 +127,10 @@ func (d *PostgresStorage) GetUserTodos(id uint) (*sql.Rows, error){
     log.Println("[DBGINFO]", "id:", id)
     query := 
     `SELECT todo.id, todo.title 
-        FROM todo 
-        JOIN "user"
-        ON todo.user_id = "user".id
-        WHERE todo.user_id = $1`
+    FROM todo 
+    JOIN "user"
+    ON todo.user_id = "user".id
+    WHERE todo.user_id = $1`
 
     rows, err := d.DB.Query(query, id)
     return rows, err

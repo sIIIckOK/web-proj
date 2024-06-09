@@ -1,20 +1,20 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"strconv"
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
+    "strconv"
 )
 
 func Register(s *Server) {
 
-	s.Mux.HandleFunc("POST /make-user", s.HandleCreateUser)
-	s.Mux.HandleFunc("DELETE /delete-user", s.HandleDeleteUser)
+    s.Mux.HandleFunc("POST /make-user", s.HandleCreateUser)
+    s.Mux.HandleFunc("DELETE /delete-user", s.HandleDeleteUser)
 
-	s.Mux.HandleFunc("POST /make-todo", s.HandleCreateTodo)
-	s.Mux.HandleFunc("DELETE /delete-todo", s.HandleDeleteTodo)
+    s.Mux.HandleFunc("POST /make-todo", s.HandleCreateTodo)
+    s.Mux.HandleFunc("DELETE /delete-todo", s.HandleDeleteTodo)
 
     s.Mux.HandleFunc("GET /user-todos", s.HandleGetUserTodos)
     s.Mux.HandleFunc("GET /test-ping", func(w http.ResponseWriter, r *http.Request) {
@@ -23,19 +23,19 @@ func Register(s *Server) {
 }
 
 func (s *Server) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
-	var data ReqCreateUser
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+    var data ReqCreateUser
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusBadRequest)
         return
-	}
+    }
 
-	err := s.DB.CreateUser(data)
-	if err != nil {
+    err := s.DB.CreateUser(data)
+    if err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusInternalServerError)
         return
-	}
+    }
     log.Println("[INFO]", "POST /make-user")
 
     w.WriteHeader(http.StatusOK)
@@ -64,19 +64,19 @@ func (s *Server) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
 
 
 func (s *Server) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
-	var data ReqCreateTodo
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+    var data ReqCreateTodo
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusBadRequest)
         return
-	}
+    }
 
-	err := s.DB.CreateTodo(data)
-	if err != nil {
+    err := s.DB.CreateTodo(data)
+    if err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusInternalServerError)
         return
-	}
+    }
     log.Println("[INFO]", "POST /make-todo")
     w.WriteHeader(http.StatusOK)
 }
@@ -84,11 +84,11 @@ func (s *Server) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
 func (s *Server) HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {
     var data struct { Id uint `json:"id"` }
 
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusBadRequest)
         return
-	}
+    }
 
     err := s.DB.DeleteTodo(uint(data.Id))
     if err != nil {
@@ -104,11 +104,11 @@ func (s *Server) HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {
 func (s *Server) HandleGetUserTodos(w http.ResponseWriter, r *http.Request) {
     var data struct { Id uint `json:"userId"` }
 
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusBadRequest)
         return
-	}
+    }
     if data.Id <= 0 {
         log.Println("[ERROR]", "request with invalid id")
         w.WriteHeader(http.StatusBadRequest)
