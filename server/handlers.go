@@ -30,15 +30,22 @@ func (s *Server) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    err := s.DB.CreateUser(data)
+    user, err := s.DB.CreateUser(data)
     if err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
-    log.Println("[INFO]", "POST /make-user")
 
+    log.Println("[INFO]", "POST /make-user")
     w.WriteHeader(http.StatusOK)
+    json, err := json.Marshal(user)
+    if err != nil {
+        log.Println("[ERROR]", err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    w.Write(json)
 }
 
 func (s *Server) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -71,13 +78,21 @@ func (s *Server) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    err := s.DB.CreateTodo(data)
+    todo, err := s.DB.CreateTodo(data)
     if err != nil {
         log.Println("[ERROR]", err)
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
+    
     log.Println("[INFO]", "POST /make-todo")
+    json, err := json.Marshal(todo)
+    if err != nil {
+        log.Println("[ERROR]", err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    w.Write(json)
     w.WriteHeader(http.StatusOK)
 }
 

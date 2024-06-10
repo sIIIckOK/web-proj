@@ -90,13 +90,19 @@ func (d *PostgresStorage) CreateTodoTableINE() error {
     return nil
 }
 
-func (d *PostgresStorage) CreateUser(r ReqCreateUser) error {
+func (d *PostgresStorage) CreateUser(r ReqCreateUser) (User, error) {
     query := 
     `INSERT INTO "user" (username, first_name, last_name)
-    VALUES ($1, $2, $3)`
+    VALUES ($1, $2, $3) RETURNING id, username, first_name, last_name`
 
-    _, err := d.DB.Query(query, r.Username, r.FirstName, r.LastName)
-    return err
+    var user User 
+    err := d.DB.QueryRow(query, r.Username, r.FirstName, r.LastName).Scan(
+        &user.Id, 
+        &user.Username, 
+        &user.FirstName, 
+        &user.LastName,
+    )
+    return user, err
 }
 
 func (d *PostgresStorage) DeleteUser(id uint) error {
@@ -107,13 +113,18 @@ func (d *PostgresStorage) DeleteUser(id uint) error {
 }
 
 
-func (d *PostgresStorage) CreateTodo(r ReqCreateTodo) error {
+func (d *PostgresStorage) CreateTodo(r ReqCreateTodo) (Todo, error) {
     query := 
     `INSERT INTO todo (title, user_id)
-    VALUES ($1, $2)`
+    VALUES ($1, $2) RETURNING id, title, user_id`
 
-    _, err := d.DB.Query(query, r.Title, r.UserId)
-    return err
+    var todo Todo
+    err := d.DB.QueryRow(query, r.Title, r.UserId).Scan(
+        &todo.Id, 
+        &todo.Title, 
+        &todo.UserId, 
+    )
+    return todo, err
 }
 
 func (d *PostgresStorage) DeleteTodo(id uint) error {

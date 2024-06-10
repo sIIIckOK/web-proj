@@ -11,11 +11,11 @@ type Storer interface {
     CreateDatabaseINE(string) error
 
     CreateUserTableINE() error
-    CreateUser(ReqCreateUser) error
+    CreateUser(ReqCreateUser) (User, error)
     DeleteUser(id uint) error
 
     CreateTodoTableINE() error
-    CreateTodo(ReqCreateTodo) error 
+    CreateTodo(ReqCreateTodo) (Todo, error)
     DeleteTodo(id uint) error
 
     GetUserTodos(id uint) (*sql.Rows, error)
@@ -40,6 +40,12 @@ type User struct {
     Username  string `json:"username"`
     FirstName string `json:"firstName"`
     LastName  string `json:"lastName"`
+}
+
+type Todo struct {
+    Id     uint   `json:"id"`
+    Title  string `json:"title"`
+    UserId uint   `json:"userId"`
 }
 
 type ReqCreateUser struct {

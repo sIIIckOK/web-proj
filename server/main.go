@@ -7,7 +7,7 @@ import (
 )
 
 const (
-    port = "localhost:5050"
+    port = "localhost:5005"
 )
 
 func main() {
