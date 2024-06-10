@@ -33,7 +33,7 @@ func (s *Server) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
     user, err := s.DB.CreateUser(data)
     if err != nil {
         log.Println("[ERROR]", err)
-        w.WriteHeader(http.StatusInternalServerError)
+        w.WriteHeader(http.StatusBadRequest)
         return
     }
 
@@ -81,7 +81,7 @@ func (s *Server) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
     todo, err := s.DB.CreateTodo(data)
     if err != nil {
         log.Println("[ERROR]", err)
-        w.WriteHeader(http.StatusInternalServerError)
+        w.WriteHeader(http.StatusBadRequest)
         return
     }
     

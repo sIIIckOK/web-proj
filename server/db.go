@@ -63,10 +63,10 @@ func (d *PostgresStorage) CreateUserTableINE() error {
     query := 
     `CREATE TABLE IF NOT EXISTS "user" (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    password TEXT)`
+    password TEXT NOT NULL)`
 
     if _, err := d.DB.Query(query); err != nil {
         return errors.New("error creating \"user\" table: " + err.Error())
@@ -79,7 +79,7 @@ func (d *PostgresStorage) CreateTodoTableINE() error {
     `CREATE TABLE IF NOT EXISTS todo (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    user_id INT,
+    user_id INT NOT NULL,
     CONSTRAINT fk_todo_userid 
     FOREIGN KEY(user_id) 
     REFERENCES "user"(id))`
@@ -92,11 +92,11 @@ func (d *PostgresStorage) CreateTodoTableINE() error {
 
 func (d *PostgresStorage) CreateUser(r ReqCreateUser) (User, error) {
     query := 
-    `INSERT INTO "user" (username, first_name, last_name)
-    VALUES ($1, $2, $3) RETURNING id, username, first_name, last_name`
+    `INSERT INTO "user" (username, first_name, last_name, password)
+    VALUES ($1, $2, $3, $4) RETURNING id, username, first_name, last_name`
 
     var user User 
-    err := d.DB.QueryRow(query, r.Username, r.FirstName, r.LastName).Scan(
+    err := d.DB.QueryRow(query, r.Username, r.FirstName, r.LastName, r.Password).Scan(
         &user.Id, 
         &user.Username, 
         &user.FirstName, 
